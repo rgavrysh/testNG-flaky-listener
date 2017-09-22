@@ -48,9 +48,7 @@ public class RetryListener implements IAnnotationTransformer, ITestListener {
                     DBase.testsDB.get(method.getMethodName()).getFlaky()) {
                 try {
                     method.setRetryAnalyzer(Retry.class.newInstance());
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
+                } catch (InstantiationException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
             }
@@ -61,6 +59,7 @@ public class RetryListener implements IAnnotationTransformer, ITestListener {
         Integer buildRun = (int) iTestContext.getEndDate().getTime();
         for (ITestNGMethod method : iTestContext.getAllTestMethods()) {
             boolean isFailed = !iTestContext.getFailedTests().getResults(method).isEmpty();
+            //todo: DB Service. Update should be based on test id in DB.
             DBase.updateDB(method.getMethodName(), new Test(isFailed, buildRun, method.getMethodName(), 1));
         }
         DBase.write();
